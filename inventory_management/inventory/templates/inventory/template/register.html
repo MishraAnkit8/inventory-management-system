@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}"> 
+    <title>User Registration</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+</head>
+<body>
+
+<section class="vh-100" style="background-color: #eee;">
+    <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-12 col-xl-11">
+                <div class="card text-black" style="border-radius: 25px;">
+                    <div class="card-body p-md-5">
+                        <div class="row justify-content-center">
+                            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+
+                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+
+                                <div class="mx-1 mx-md-4">
+
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <input type="text" id="first-name" class="form-control" />
+                                            <label class="form-label" for="first-name">First Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <input type="text" id="last-name" class="form-control" />
+                                            <label class="form-label" for="last-name">Last Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <input type="email" id="email-id" class="form-control" />
+                                            <label class="form-label" for="email-id">Your Email</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <input type="text" id="mobile-no" class="form-control" />
+                                            <label class="form-label" for="mobile-no">Mobile No.</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <input type="password" id="user-password" class="form-control" />
+                                            <label class="form-label" for="user-password">New Password</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check d-flex justify-content-center mb-5">
+                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
+                                        <label class="form-check-label" for="form2Example3">
+                                            I agree to all statements in <a href="#!">Terms of service</a>
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                        <button type="button" class="btn btn-primary btn-lg" id="register-btn">Register</button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                                     class="img-fluid" alt="Sample image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const registerBtn = document.getElementById('register-btn');
+
+    registerBtn.addEventListener('click', () => {
+        console.log('register button clicked');
+        const registerFormData = {};
+
+        registerFormData.firstName = document.getElementById('first-name').value; // Fixed typo
+        registerFormData.lastName = document.getElementById('last-name').value;
+        registerFormData.userEmail = document.getElementById('email-id').value;
+        registerFormData.mobileNo = document.getElementById('mobile-no').value;
+        registerFormData.userPassword = document.getElementById('user-password').value;
+
+        const payload = {
+            registerFormData: registerFormData
+        };
+
+        console.log('payload ===>>>', payload);
+
+        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        console.log('csrftoken <<<<>>>>', csrftoken);
+
+        fetch('/inventory/register/user-registration-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(payload)
+        })
+            .then((Response) => {
+                return Response.ok ? Response.json() : Promise.reject('Network response was not ok.');
+            })
+            .then((data) => {
+                if (data.status === 'Done') {
+                    console.log('data ===<<<>>>>>', data);
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "success",
+                        title: `${data.message}`,
+                        showConfirmButton: true,
+                        allowOutsideClick: false,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#DD6B55"
+                    }).then(() => {
+                        window.location.href = '/inventory/login/'
+                    });
+
+                } else {
+                    console.log('data ====>>>>>', data);
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "error",
+                        title: `${data.errorCode}`,
+                        allowOutsideClick: false,
+                        color: "red",
+                        html: `<span style="color: red;">${data.message}</span>`,
+                        showConfirmButton: true,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#DD6B55"
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                Swal.fire({
+                    position: "top-center",
+                    icon: "error",
+                    title: "Data Insertion Failed",
+                    allowOutsideClick: false,
+                    color: "red",
+                    html: `<span style="color: red;">${error}</span>`,
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#DD6B55"
+                });
+            });
+    });
+</script>
+</body>
+</html>

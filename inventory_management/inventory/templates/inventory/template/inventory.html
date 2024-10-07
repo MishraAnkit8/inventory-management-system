@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include 'inventory/template/partials/head.html' %}
+        <meta name="csrf-token" content="{{ csrf_token }}">
+        <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
+
+
+    </head>
+<body>
+    {% include 'inventory/template/partials/header.html' %}
+<!-- Left Sidebar section -->
+{% include 'inventory/template/partials/left-sidebar.html' %}
+
+    <main class="main" id="main-content">
+        <div class="base-section coustom-section">
+            <!--DASHBOARD CONTENT START-->
+            <div class="errorHtml"></div>
+            <div class="breadcrumbs-container">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-link">
+                        <a href="{% url 'dashboard' %}"> DASHBOARD </a>
+                    </li>
+                    <li class="breadcrumb-link"> Inventory Management </li>
+                </ul>
+            </div>
+            <div>
+                <div class="table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="pl-2">Inventory Management List </h5>
+                    </div>
+                    <div>
+                        <button id="inventory-form" type="button" class="btn btn-primary add-modal" data-toggle="modal"
+                            data-target="#invetory-modal">
+                            <i class="fas fa-plus plus"></i></button>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body table-responsive">
+                   
+                    <table class="table custom-table table-responsive research-pagination" id="inventory-list">
+                        <thead>
+                            <tr>
+                                <th class="col-lg-1">#</th>
+                                <th class="col-lg-1 faculty-name">Inventory Name</th>
+                                <th class="col-lg-1 module-name">Inventory Product</th>
+                                <th class="col-lg-1 plateform-name">Platform</th>
+                                <th class="col-lg-1 document-link">Prize</th>
+                                <th class="col-lg-1 created-by">Created By</th>
+                                <th class="col-lg-1 created-date">Created Date</th>
+                                <th class="col-lg-1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in inventory_items %}
+                            <tr data-invetory-id="{{ item.id }}">
+                                <td>{{ forloop.counter }}</td> 
+                                <td class="invetory-name">{{ item.inventory_name }}</td>
+                                <td class="inventory-product">{{ item.inventory_product }}</td>
+                                <td class="plateform-name">{{ item.invetory_platform }}</td>
+                                <td class="inventory-prize">{{ item.invetory_prize }}</td>
+                                <td>{{ item.created_by }}</td>
+                                <td>{{ item.created_date }}</td>
+                                <td>
+                                    <label class="view" data-invetory-id="{{ item.id }}">
+                                        <i class="fa-solid fa-eye view text-danger"></i>
+                                    </label>
+                                    <label class="edit" data-invetory-id="{{ item.id }}">
+                                        <i class="fa fa-edit edit text-danger"></i>
+                                    </label>
+                                    <label class="delete" data-invetory-id="{{ item.id }}">
+                                        <i class="fa-solid fa-trash delete text-danger"></i>
+                                    </label>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                   
+                </div>
+            </div>
+            <!--Import Modal -->
+            <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal"
+                aria-hidden="true">
+            </div>
+            <!-- EDIT PROGRAM AND UPDATE -->
+            <div class="modal fade" id="edit-program-modal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Update Program</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div id="errorHtml"></div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Program Name</label>
+                                <input type="text" class="form-control" id="program_name" name="program_name">
+                                <input type="hidden" class="form-control" id="hidden_id" name="hidden_id">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label">Program Type</label>
+                                <select class="form-control" name="program_type_lid" id="program_type_lid">
+        
+                                    <option value="1">Full Time</option>
+        
+                                    <option value="2">Part Time</option>
+        
+                                </select>
+                            </div>
+        
+                            <div class="mb-3">
+                                <label for="abbr" class="form-label">Program Abbr</label>
+                                <input type="text" class="form-control" id="abbr" name="abbr">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary updateProgram">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modal form for e-content publication -->
+    <div class="modal fade " id="invetory-modal" tabindex="-1" role="dialog" aria-labelledby="invetory-modal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg modal-fullscreen p-5" role="document">
+            <div class="modal-content modal-content-data validate-input">
+                <div class="modal-header">
+                    <p id="e-content">Inventory Development Modal </p>
+                    <div class="close" data-dismiss="modal" aria-label="Close">
+                        <span type="button"><i class="fas fa-times "></i></span>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                         <!-- Name of the Faculty -->
+                         <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                            <label for="faculty-name" class="form-label fw-bold"> Inventory Name </label>
+                            <input type="text"  id="invetory-name" data-validate="isEmpty,isExist" data data-err-msg="This field is required and min length > 1." class="form-control number"
+                                required>
+                        </div>
+                        <!-- Name of the module developed -->
+                        <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                            <label for="inventory-product" class="form-label fw-bold"> Inventory Product </label>
+                            <input type="text"  id="inventory-product" data-validate="isEmpty,isExist" data data-err-msg="This field is required and min length > 1." class="form-control number"
+                                required>
+                        </div>
+                        <!--  	Platform on which module is developed -->
+                        <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                            <label for="plateform-name" class="form-label  fw-bold"> Platform</label>
+                            <input type="text" name="plateform-name" id="plateform-name" class="form-control"
+                                data-validate="isEmpty,isNotNumber,isExist,isLength:2:255"  data-err-msg="This field is required and min length > 1." required />
+                        </div>
+                        <!-- Date of launching e content -->
+                        <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <label for="inventory-prize" class="form-label  fw-bold"> Prize </label>
+                                <input type="number" name="inventory-prize" id="inventory-prize"
+                                    data-validate="isEmpty,isExist"  data-err-msg="Date is required ." class="form-control"
+                                   required />
+                        </div>
+    
+
+    
+                    </div>
+                </div>
+                <!-- footer button -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary " id="submit-btn">Submit</button>
+                    <button type="button" class="btn btn-primary d-none" id="update-btn">update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <script>
+
+        const invetoryList  = document.getElementById('inventory-list');
+        let inventoryId, inventoryRowToBeUpdate;
+        const addInventoryForm = document.getElementById('inventory-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const updateBtn = document.getElementById('update-btn');
+        
+        addInventoryForm.addEventListener('click', (event) => {
+            if(event.target.tagName === 'BUTTON' && event.target.classList.contains('add-modal') || event.target.classList.contains('plus')){
+                updateBtn.classList.add('d-none');
+                submitBtn.classList.remove('d-none');
+                document.getElementById('invetory-name').value = '';
+                document.getElementById('inventory-product').value = '';
+                document.getElementById('plateform-name').value = '';
+                document.getElementById('inventory-prize').value = '';
+
+            }
+        })
+    
+        submitBtn.addEventListener('click', (event) => {
+            event.preventDefault();  // Prevent the default form submission
+
+            console.log('clicked submit button');
+
+            const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            console.log('csrftoken <<<<>>>>', csrftoken);
+
+            const inventoryForm = {};
+    
+            inventoryForm.inventoryName = document.getElementById('invetory-name').value;
+            inventoryForm.inventoryProduct = document.getElementById('inventory-product').value;
+            inventoryForm.plateformName = document.getElementById('plateform-name').value;
+            inventoryForm.inventoryPrize = document.getElementById('inventory-prize').value;
+
+    
+           const payload = {
+            inventoryForm : inventoryForm
+           }
+    
+           console.log('payload ===>>>', payload)
+
+
+            fetch('/inventory/inventory/inventry-details', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(payload)
+            })
+            .then((response) => {
+                return response.ok ? response.json() : Promise.reject('Network response was not ok.');
+            })
+            .then((data) => {
+                if (data.status === 'Done') {
+                    console.log('data ===<<<>>>>>', data);
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "success",
+                        title: `${data.message}`,
+                        showConfirmButton: true,
+                        allowOutsideClick: false,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#DD6B55"
+                    }).then(() => {
+                        window.location.href = '/inventory/inventery/'
+                    });
+                } else {
+                    console.log('data ====>>>>>', data);
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "error",
+                        title: `${data.errorCode}`,
+                        allowOutsideClick: false,
+                        color: "red",
+                        html: `<span style="color: red;">${data.message}</span>`,
+                        showConfirmButton: true,
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#DD6B55"
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                Swal.fire({
+                    position: "top-center",
+                    icon: "error",
+                    title: "Data Insertion Failed",
+                    allowOutsideClick: false,
+                    color: "red",
+                    html: `<span style="color: red;">${error}</span>`,
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#DD6B55"
+                });
+            });
+        });
+    
+        invetoryList.addEventListener('click', (event) => {
+            if(event.target.classList.contains('edit')){
+                submitBtn.classList.add('d-none');
+                updateBtn.classList.remove('d-none');
+                inventoryRowToBeUpdate = event.target.closest('tr');
+                console.log('inventoryRowToBeUpdate ===>>>>', inventoryRowToBeUpdate);
+                inventoryId = inventoryRowToBeUpdate.getAttribute('data-invetory-id');
+                document.getElementById('invetory-name').value = inventoryRowToBeUpdate.querySelector('.invetory-name').innerText;
+                document.getElementById('inventory-product').value = inventoryRowToBeUpdate.querySelector('.inventory-product').innerText;
+                document.getElementById('plateform-name').value = inventoryRowToBeUpdate.querySelector('.plateform-name').innerText;
+                document.getElementById('inventory-prize').value = inventoryRowToBeUpdate.querySelector('.inventory-prize').innerText;
+                console.log('inventoryId ====>>>>', inventoryId);
+                $('#invetory-modal').modal('show');
+            }
+    
+            if (event.target.classList.contains('delete')) {
+                const rowToBeDeleted = event.target.closest('tr');
+                console.log('rowToBeDeleted ===>>>>>', rowToBeDeleted);
+                inventoryId = rowToBeDeleted.getAttribute('data-invetory-id');
+    
+                let confirmDelete = "Do you want to delete the Book  E-content Devoloment record?";
+                if (confirmDelete) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            fetch('/inventory/inventory/delete', {
+                                method: 'POST',
+                                headers: {
+                                    'content-type': 'application/json'
+                                },
+                                body: JSON.stringify({ inventoryId })
+                            })
+                                .then((result) => result.json())
+                                .then((data) => {
+                                    if (data.status === 'Done') {
+                                        console.log('data ==>>', data);
+                                        rowToBeDeleted.remove();
+                                        Swal.fire({
+                                            title: "Deleted!",
+                                            text: "Record has been deleted.",
+                                            icon: "success"
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error('Error:', error);
+                                    const message = error;
+                                    Swal.fire({
+                                        position: "top-center",
+                                        icon: "error",
+                                        title: `${message}`,
+                                        color: "red",
+                                        showConfirmButton: false,
+                                    });
+                                });
+                        }
+                    });
+                }
+                else {
+                    return
+                }
+            }
+    
+        
+        })
+    
+
+
+
+        updateBtn.addEventListener('click', (event) => {
+                event.preventDefault();  
+
+                console.log('clicked submit button');
+
+                const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                console.log('csrftoken <<<<>>>>', csrftoken);
+
+                const updateInventoryForm = {};
+                
+                updateInventoryForm.inventoryId = inventoryId;
+                updateInventoryForm.inventoryName = document.getElementById('invetory-name').value;
+                updateInventoryForm.inventoryProduct = document.getElementById('inventory-product').value;
+                updateInventoryForm.plateformName = document.getElementById('plateform-name').value;
+                updateInventoryForm.inventoryPrize = document.getElementById('inventory-prize').value;
+
+
+                const payload = {
+                    updateInventoryForm: updateInventoryForm
+                }
+
+                console.log('payload ===>>>', payload)
+
+
+                fetch('/inventory/inventory/inventry-details-update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then((response) => {
+                        return response.ok ? response.json() : Promise.reject('Network response was not ok.');
+                    })
+                    .then((data) => {
+                        if (data.status === 'Done') {
+                            console.log('data ===<<<>>>>>', data);
+                            Swal.fire({
+                                position: "top-center",
+                                icon: "success",
+                                title: `${data.message}`,
+                                showConfirmButton: true,
+                                allowOutsideClick: false,
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "#DD6B55"
+                            }).then(() => {
+                                window.location.href = '/inventory/inventery/'
+                            });
+                        } else {
+                            console.log('data ====>>>>>', data);
+                            Swal.fire({
+                                position: "top-center",
+                                icon: "error",
+                                title: `${data.errorCode}`,
+                                allowOutsideClick: false,
+                                color: "red",
+                                html: `<span style="color: red;">${data.message}</span>`,
+                                showConfirmButton: true,
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "#DD6B55"
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "error",
+                            title: "Data Insertion Failed",
+                            allowOutsideClick: false,
+                            color: "red",
+                            html: `<span style="color: red;">${error}</span>`,
+                            showConfirmButton: true,
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#DD6B55"
+                        });
+                    });
+
+            })
+        
+     
+
+        $("#inventory-list").DataTable({
+
+            "pageLength": 5,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            })
+                </script>
+     </body>
+
+{% include 'inventory/template/partials/header.html' %}
+<!-- Left Sidebar section -->
+{% include 'inventory/template/partials/left-sidebar.html' %}
+
+
+
+   <!-- Footer section -->
+   {% include 'inventory/template/partials/footer.html' %}

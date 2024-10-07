@@ -1,0 +1,236 @@
+<!-- inventory/templates/inventory/homepage.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Welcome to the Inventory Management System</h1>
+        <p class="text-center">Manage your inventory efficiently and easily.</p>
+        <div class="text-center">
+            <a href="{% url 'register' %}" class="btn btn-primary">Register Here</a>
+        </div>
+    </div>
+
+                <!-- Book Chapter Modal  form -->
+                <div class="modal fade " id="book-chapter-modal" tabindex="-1" role="dialog"
+                aria-labelledby="book-chapter-modal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg modal-fullscreen p-5" role="document">
+                    <div class="modal-content modal-content-data validate-input">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="book-chapter">BOOK CHAPTER PUBLICATION </h5>
+                            <div class="close" data-dismiss="modal" aria-label="Close">
+                                <span TYPE="button" aria-hidden="true"><i class="fas fa-times"></i></span>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <!--NMIMS School - Author-->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="nmims-school-authors" class="form-label fw-bold ">NMIMS School - Author
+                                        <i style="color: red;">*</i></label>
+                                    <input type="url" name="nmimsSchoolAuthors" id="nmims-school-authors"
+                                        data-validate="isEmpty,isLength:2:255" data-err-msg="Provide Valid Input"
+                                        class="form-control " required />
+                                </div>
+
+                                <!-- NMIMS Campus - Author -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="nmims-campus-authors" class="form-label fw-bold ">NMIMS Campus - Author
+                                        <i style="color: red;">*</i></label>
+                                    <input type="url" name="nmims-campus-authors" id="nmims-campus-authors"
+                                        data-validate="isEmpty,isLength:2:255" class="form-control"
+                                        data-err-msg="Provide Valid Input" required />
+                                </div>
+
+                                <!-- author's name -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="author-first-name" class="form-label fw-bold"> All Authors Names <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="author-name" id="author-name"
+                                        data-validate="isEmpty,isLength:2:255" data-err-msg="Provide Valid Input"
+                                        class="form-control" required>
+                                </div>
+
+
+                                <!-- Title of chapter -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="chapter-title" class="form-label fw-bold">Title Of Chapter <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="titleOfBook" id="chapter-title" class="form-control"
+                                        data-validate="isEmpty,isExist,isLength:2:255"
+                                        data-err-msg="Provide Valid Input" required>
+                                </div>
+                                <!-- Editor(s) names -->
+                                <!-- <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="edition" class="form-label fw-bold">Editor(s) names</label>
+                                    <input type="text" name="case-study" id="editor-name" class="form-control"
+                                        data-validate="isEmpty,isAlphaNumericWithSpaceNoLeadingSpace"
+                                        data-err-msg="AlphaNumeric value is required." required>
+                                </div> -->
+                                <!-- Book Title -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="book-title" class="form-label fw-bold">Title Of
+                                        The Book <i style="color: red;">*</i></label>
+                                    <input type="text" name="titleOfBook" id="book-title" class="form-control"
+                                        data-validate="isEmpty,isNotNumber,isExist,isLength:2:255"
+                                        data-err-msg="Provide Valid Input" required>
+                                </div>
+                                <!-- Edition -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="edition" class="form-label fw-bold">Edition (if it isn't the
+                                        first) <i style="color: red;">*</i></label>
+                                    <input type="text" name="case-study" id="edition" class="form-control"
+                                        data-validate="isEmpty,isLength:1:255"
+                                        data-err-msg="AlphaNumeric value is required." required>
+                                </div>
+                                <!-- Editor(s) Of The Book -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="book-editor" class="form-label fw-bold">Editor(s) Of The Book <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="editor" id="book-editor" class="form-control"
+                                        data-validate="isEmpty,isLength:2:255" data-err-msg="Provide Valid Input"
+                                        required>
+                                </div>
+                                <!-- Page numbers of the Chapter -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="page-number" class="form-label fw-bold">Page Numbers Of The
+                                        Chapter <i style="color: red;">*</i></label>
+                                    <input type="text" name="vol" id="page-number" data-validate="isEmpty,isExist"
+                                        data-err-msg="Provide valid input" class="form-control" required>
+                                </div>
+                                <!-- Publisher Name -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="publisher-name" class="form-label fw-bold">Publisher Name <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="vol" id="publisher-name" class="form-control"
+                                        data-validate="isEmpty,isExist,isLength:2:255"
+                                        data-err-msg="Provide Valid Input" required>
+                                </div>
+                                <!-- Publisher Category  -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="publisher-category" id="publisher-category"
+                                        class="form-label fw-bold mb-3">Publisher Category <i
+                                            style="color: red;">*</i></label><br>
+                                    <div class="form-check-inline">
+                                        <label for="inter-national" class="form-check-label">
+                                            <input type="radio" class="form-check-input" id="inter-national"
+                                                name="publisher-category" value="International"> International
+                                        </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                        <label for="national" class="form-check-label">
+                                            <input type="radio" class="form-check-input" id="national"
+                                                name="publisher-category" value="National" checked> National
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- Publication Year -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="publication-year" class="form-label fw-bold">Publication Year <i
+                                            style="color: red;">*</i></label>
+                                    <input type="number" name="Year" id="publication-year" class="form-control"
+                                        data-validate="isEmpty,isNumber,isValidYear"
+                                        data-err-msg="Publication year required." required>
+                                </div>
+                                <!-- URL of the book publication -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="book-url" class="form-label fw-bold">Weblink Of the Book <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="URL" id="book-url" class="form-control"
+                                        data-validate="isEmpty,isExist,isLength:2:255"
+                                        data-err-msg="Provide Valid Input" required>
+                                </div>
+                                <!-- ISBN Number -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="ISBN-Number" class="form-label fw-bold">ISBN Number <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="ISBN-Number" id="isbn-no" class="form-control"
+                                        data-validate="isEmpty,isExist,isLength:1:255"
+                                        data-err-msg="Provide valid input" required>
+                                </div>
+                                <!-- DOI of Book Chapter -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="doi-book-id" class="form-label fw-bold">WebLink /DOI No. Of The Book
+                                        Chapter <i style="color: red;">*</i></label>
+                                    <input type="text" name="doi-book-id" id="doi-book-id" class="form-control"
+                                        data-validate="isEmpty,isLength:1:255" data-err-msg="Provide Valid input."
+                                        required>
+                                </div>
+                                <!-- volume number -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="volume-number" class="form-label fw-bold">Volume Number <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="volume-number" id="volume-number" class="form-control"
+                                        data-validate="isEmpty,isLength:1:255" data-err-msg="Field value is required."
+                                        required>
+                                </div>
+                                <!-- No. of NMIMS Authors -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="number-of-nmims-authors" class="form-label fw-bold ">No. Of NMIMS
+                                        Authors <i style="color: red;">*</i></label>
+                                    <input type="number" name="nmims-authors" id="number-of-nmims-authors"
+                                        class="form-control" data-validate="isEmpty,isNumber"
+                                        data-err-msg="numeric value is required." required />
+                                </div>
+                                <!-- Name of NMIMS Authors -->
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <label for="nmims-authors" class="form-label fw-bold ">Name Of NMIMS Authors <i
+                                            style="color: red;">*</i></label>
+                                    <input type="text" name="nmims-authors" id="nmims-authors" class="form-control"
+                                        data-validate="isEmpty,isLength:2:255" data-err-msg="Provide Valid Input"
+                                        required />
+                                </div>
+
+                                <!-- Upload Supporting Documents-->
+                                <div class="form-group col-lg-6 col-md-8 col-sm-12 mb-4">
+                                    <div class="col-lg-6 col-md-8 col-sm-12">
+                                        <label class="form-label fw-bold ">
+                                            Upload Supporting Documents <i style="color: red;">*</i>
+                                            <div id="uploadNewSupportDocumentDiv">
+                                                <label for="uploadNewSupportDocument"><small>Click to Upload New
+                                                        File</small></label>
+                                                <input type="checkbox" name="uploadNewSupportDocument"
+                                                    id="uploadNewSupportDocument">
+                                            </div>
+                                        </label>
+                                        <div class="d-flex">
+                                            <input type="file" name="researchSupportingDocument"
+                                                id="supporting-documents" data-validate="isEmpty,isExist,isFile"
+                                                data-err-msg="File is required." class="col-md-12 form-control "
+                                                required multiple>
+                                            <button class="download-btn download-file" id="book-chapter-edit"><i
+                                                    class="fas fa-download text-danger"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-6 col-md-2 col-sm-12 mb-4">
+                                    <div id="file-view" class="h-10 w-10">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- footer button -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary d-none" id="submit-btn">Submit</button>
+                            <button type="button" class="btn btn-primary d-none" id="update-btn">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Optional JavaScript and jQuery for Bootstrap functionality -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
