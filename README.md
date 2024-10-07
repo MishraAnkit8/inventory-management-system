@@ -12,9 +12,7 @@ A simple Inventory Management System built with Django to manage inventory recor
   - [Creating a Virtual Environment](#creating-a-virtual-environment)
   - [Setting Up the Project](#setting-up-the-project)
   - [Running the Development Server](#running-the-development-server)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Features
 
@@ -40,6 +38,15 @@ A simple Inventory Management System built with Django to manage inventory recor
 - Basic knowledge of Django and web development.
 
 ### Installation
+
+### Running the Development Server
+ - python manage.py runserver
+ - python manage.py makemigrations
+ - python manage.py migrate
+ - python manage.py createsuperuser
+
+
+
 
 1. **Clone the repository:**
 
