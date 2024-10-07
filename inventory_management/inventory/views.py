@@ -1,69 +1,61 @@
+from venv import logger
 from django.shortcuts import get_object_or_404, render, redirect
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, InventoryManagementForm
 from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .utils import generate_access_token, generate_refresh_token
 import json
-from .models import User , InventoryManagement, InventoryUpdate
+import logging
+from .models import User, InventoryManagement, InventoryUpdate
 from .user_details import get_user_by_email
-from django.core.exceptions import ValidationError
-from .forms import UserRegistrationForm, InventoryManagementForm
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-from django.contrib.auth import authenticate, login
-
+from django.contrib.auth import login
 from .redis_cache import redis_client
+from rest_framework import generics, permissions
+from rest_framework.response import Response
+from .serializers import InventorySerializer
 
-from decimal import Decimal
+class InventoryListCreateView(generics.ListCreateAPIView):
+    queryset = InventoryManagement.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save()
 
-# home page view 
+class InventoryDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = InventoryManagement.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+# Home page view
 def homepage_view(request):
     return render(request, 'inventory/template/homepage.html')
 
-
+# User registration view
 def register_page(request):
     return render(request, 'inventory/template/register.html')
 
-
-
-
-# for user registration 
-
+@csrf_exempt
 def user_registration(request):
+    """Handle user registration."""
     if request.method == 'POST':
         try:
-            # Load the JSON data from the request body
             data = json.loads(request.body)
-
-            print('data coming from frontend <<<<>>>>', data)
-
             register_data = data.get('registerFormData')
-            print('register_data ===<<<<<>>>>', register_data)
 
-            # Check if register_data is present
             if not register_data:
-                return JsonResponse({
-                    'status': 'Error',
-                    'message': 'No registration data provided.'
-                }, status=400)
+                return JsonResponse({'status': 'Error', 'message': 'No registration data provided.'}, status=400)
 
-            # Extract user details
             email = register_data.get('userEmail')
             mobile_no = register_data.get('mobileNo')
 
-            print(f"Checking email: {email}, mobile number: {mobile_no}")
-
-            print('User in side view ===<<<>', User)
+            # Check for existing user
             if User.objects.filter(Q(email=email) | Q(mobile_no=mobile_no)).exists():
-                print('yes inside if condition ')
-                return JsonResponse({
-                    'status': 'Done',
-                    'message': 'A user with this email or mobile number is already registered.'
-                }, status=200)
-            
+                return JsonResponse({'status': 'Done', 'message': 'A user with this email or mobile number is already registered.'}, status=200)
 
             # Populate form with extracted data
             form = UserRegistrationForm({
@@ -74,92 +66,44 @@ def user_registration(request):
                 'password': register_data.get('userPassword')
             })
 
-            print('Form errors:', form.errors)
-
-
-            # Validate form data
             if form.is_valid():
-                print('insert is valid from ')
-                
-                # Create and save the user
                 user = form.save(commit=False)
-                # print('user  <<<>>>>', user)
-                # user.set_password(form.cleaned_data['password'])
                 user.save()
-                
-                
-
-                # Respond with success
-                return JsonResponse({
-                    'status': 'Done',
-                    'message': 'User registered successfully.'
-                }, status=200)
+                return JsonResponse({'status': 'Done', 'message': 'User registered successfully.'}, status=200)
             else:
-                # Respond with form errors
-                return JsonResponse({
-                    'status': 'Error',
-                    'errors': form.errors.as_json()  
-                }, status=400)
+                return JsonResponse({'status': 'Error', 'errors': form.errors.as_json()}, status=400)
 
         except json.JSONDecodeError:
-            return JsonResponse({
-                'status': 'Error',
-                'message': 'Invalid JSON data provided.'
-            }, status=400)
-
+            return JsonResponse({'status': 'Error', 'message': 'Invalid JSON data provided.'}, status=400)
         except Exception as e:
-            # General exception handling
-            print("Error occurred:", str(e))
-            return JsonResponse({
-                'status': 'Error',
-                'message': 'An unexpected error occurred. Please try again later.'
-            }, status=500)
+            return JsonResponse({'status': 'Error', 'message': str(e)}, status=500)
 
-    # If request method is not POST, return error
-    return JsonResponse({
-        'status': 'Error',
-        'message': 'Invalid request method.'
-    }, status=400)
-
-
-
+    return JsonResponse({'status': 'Error', 'message': 'Invalid request method.'}, status=400)
 
 def login_page_view(request): 
     return render(request, 'inventory/template/login.html')
 
-
-
 @csrf_exempt
 def login_view(request):
+    """Handle user login."""
     if request.method == 'POST':
         data = json.loads(request.body)
         email = data['loginDetails']['userEmail']
         password = data['loginDetails']['userPassword']
-        
-        print('data comming from template <<<<>>>>>', data)
-
 
         user = get_user_by_email(email)
-        
-        print('user in views  ====<<<<<>>>>>', user)
         if user:
             login(request, user)
-            
+
             # Generate tokens
             access_token = generate_access_token(user.id)
-            print('access_token ===<<<<>>>>>', access_token)
             refresh_token = generate_refresh_token(user.id)
-            print('refresh_token ===<<<<>>>>', refresh_token)
 
             # Store tokens in Redis for session management
             redis_client.set(f"user:{user.id}:access_token", access_token, ex=3600)
             redis_client.set(f"user:{user.id}:refresh_token", refresh_token, ex=604800)
 
-            # Set session data
-            print('user id for session data ===<<<<>>>', user.id)
             request.session['user_id'] = user.id
-
-           
 
             response = JsonResponse({
                 'status': 'Done',
@@ -167,63 +111,35 @@ def login_view(request):
                 'accessToken': access_token,
                 'refreshToken': refresh_token
             })
-
-            # Set tokens in HttpOnly cookies
             response.set_cookie('access_token', access_token, httponly=True, secure=True)
             response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True)
 
             return response
-
         else:
             return JsonResponse({'status': 'Error', 'message': 'Invalid email or password.'}, status=401)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
-
-
-
 def render_dashbord_page(request):
+    """Render the dashboard page."""
     return render(request, 'inventory/template/dashboard.html')
 
-
-
-
-#  from retrive inventory store data
-
 def render_inventory_store(request):
-    print('request.session.get ===<<<>>>', request.session.get('user_id'))
+    """Render the inventory store page."""
     if not request.session.get('user_id'): 
         return redirect('login') 
 
-
     inventory_items = InventoryManagement.objects.filter(active=True).order_by('-id')
-
-    print('inventory_items ===<<<>>>>', inventory_items)
-
-
-    context = {
-        'inventory_items': inventory_items,
-    } 
-    
-    print('context ===<<<>>>>', context)
+    context = {'inventory_items': inventory_items}
     return render(request, 'inventory/template/inventory.html', context)
-
-
-
-
-
-
-
-#  insert data into inventory
 
 @csrf_exempt 
 def insert_inventory_details(request):
+    """Insert inventory details into the database."""
     if request.method == 'POST':
-        # Parse the JSON data from the request body
         data = json.loads(request.body)
         form_data = data.get('inventoryForm')
 
-        # Prepare form data for validation and insertion
         form = InventoryManagementForm({
             'inventory_name': form_data['inventoryName'],
             'inventory_product': form_data['inventoryProduct'],
@@ -236,43 +152,29 @@ def insert_inventory_details(request):
             inventory.created_by = 'Admin'  
             inventory.modified_by = 'Admin'  
             inventory.save()
-            
-            # Return a success response to the frontend
             return JsonResponse({'status': 'Done', 'message': 'Inventory details added successfully'})
         else:
-            # Return an error response with form validation errors
             return JsonResponse({'status': 'Error', 'message': form.errors}, status=400)
 
     return JsonResponse({'status': 'Error', 'message': 'Invalid request method'}, status=405)
 
-
-
-
-# for update the inventory
-
 @csrf_exempt
 def inventory_details_update(request):
+    """Update inventory details."""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print('Data coming from frontend ===>>>', data)
-
             update_form = data.get('updateInventoryForm', {})
             inventory_id = update_form.get('inventoryId')
-            inventory_name = update_form.get('inventoryName')
-            inventory_product = update_form.get('inventoryProduct')
-            invetory_platform = update_form.get('plateformName')  
-            invetory_prize = update_form.get('inventoryPrize')    
 
-            # Fetch the existing inventory item based on the ID
+            # Fetch existing inventory item
             inventory = get_object_or_404(InventoryUpdate, id=inventory_id)
-            print('Inventory ===>>>', inventory)
 
-            # Update the fields
-            inventory.inventory_name = inventory_name
-            inventory.inventory_product = inventory_product
-            inventory.invetory_platform = invetory_platform  
-            inventory.invetory_prize = invetory_prize      
+            # Update fields
+            inventory.inventory_name = update_form.get('inventoryName')
+            inventory.inventory_product = update_form.get('inventoryProduct')
+            inventory.invetory_platform = update_form.get('plateformName')  
+            inventory.invetory_prize = update_form.get('inventoryPrize')      
             inventory.save()
 
             return JsonResponse({'status': 'Done', 'message': 'Inventory updated successfully!'})
@@ -281,24 +183,16 @@ def inventory_details_update(request):
             return JsonResponse({'status': 'Error', 'errorCode': '404', 'message': 'Inventory item not found'}, status=404)
         except Exception as e:
             return JsonResponse({'status': 'Error', 'errorCode': '500', 'message': str(e)}, status=500)
-    else:
-        return JsonResponse({'status': 'Error', 'errorCode': '405', 'message': 'Method not allowed'}, status=405)
-    
+    return JsonResponse({'status': 'Error', 'errorCode': '405', 'message': 'Method not allowed'}, status=405)
 
-
-
-
-#  for delete row from the inventory table
 @csrf_exempt
 def deactivate_inventory(request):
+    """Deactivate an inventory item."""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             inventory_id = data.get('inventoryId')
-            print('inventory_id ===<<<>>>', inventory_id)
-
             inventory = get_object_or_404(InventoryUpdate, id=inventory_id)
-
 
             inventory.active = False
             inventory.save()
@@ -307,5 +201,4 @@ def deactivate_inventory(request):
 
         except Exception as e:
             return JsonResponse({'status': 'Error', 'errorCode': '500', 'message': str(e)}, status=500)
-    else:
-        return JsonResponse({'status': 'Error', 'errorCode': '405', 'message': 'Method not allowed'}, status=405)
+    return JsonResponse({'status': 'Error', 'errorCode': '405', 'message': 'Method not allowed'}, status=405)

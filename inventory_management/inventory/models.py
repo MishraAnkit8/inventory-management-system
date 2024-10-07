@@ -106,3 +106,4 @@ class InventoryUpdate(models.Model):
 
     def __str__(self):
         return f"{self.inventory_name} - {self.inventory_product}"
+        
