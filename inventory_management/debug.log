@@ -5770,3 +5770,30 @@ psycopg2.errors.InvalidCursorName: cursor "_django_curs_22840_sync_1" does not e
 [2024-10-07 15:55:38,142] WARNING [django.server:213] "POST /inventory/token/ HTTP/1.1" 400 40
 [2024-10-07 15:56:48,976] WARNING [django.request:248] Bad Request: /inventory/token/
 [2024-10-07 15:56:48,976] WARNING [django.server:213] "POST /inventory/token/ HTTP/1.1" 400 40
+[2024-10-07 16:25:38,899] INFO [django.utils.autoreload:668] Watching for file changes with StatReloader
+[2024-10-07 16:25:48,418] INFO [django.server:213] "GET /inventory/dashboard/ HTTP/1.1" 200 24038
+[2024-10-07 16:25:48,460] WARNING [django.request:248] Not Found: /inventory/dashboard/<%- BASE_URL %>image/notification.png
+[2024-10-07 16:25:48,463] WARNING [django.request:248] Not Found: /inventory/dashboard/<%- BASE_URL %>image/user.png
+[2024-10-07 16:25:48,469] WARNING [django.request:248] Not Found: /inventory/dashboard/<%- BASE_URL %>image/HamburgerIcon.png
+[2024-10-07 16:25:48,470] WARNING [django.server:213] "GET /inventory/dashboard/%3C%-%20BASE_URL%20%%3Eimage/user.png HTTP/1.1" 404 5634
+[2024-10-07 16:25:48,472] WARNING [django.server:213] "GET /inventory/dashboard/%3C%-%20BASE_URL%20%%3Eimage/notification.png HTTP/1.1" 404 5658
+[2024-10-07 16:25:48,473] WARNING [django.server:213] "GET /static/icons/logo.avif HTTP/1.1" 404 1859
+[2024-10-07 16:25:48,473] WARNING [django.server:213] "GET /inventory/dashboard/%3C%-%20BASE_URL%20%%3Eimage/HamburgerIcon.png HTTP/1.1" 404 5661
+[2024-10-07 16:25:50,609] INFO [django.server:213] "GET /inventory/inventery/ HTTP/1.1" 200 54406
+[2024-10-07 16:25:50,659] WARNING [django.request:248] Not Found: /inventory/inventery/<%- BASE_URL %>image/notification.png
+[2024-10-07 16:25:50,663] WARNING [django.request:248] Not Found: /inventory/inventery/<%- BASE_URL %>image/HamburgerIcon.png
+[2024-10-07 16:25:50,671] WARNING [django.request:248] Not Found: /inventory/inventery/<%- BASE_URL %>image/user.png
+[2024-10-07 16:25:50,671] WARNING [django.server:213] "GET /inventory/inventery/%3C%-%20BASE_URL%20%%3Eimage/notification.png HTTP/1.1" 404 5658
+[2024-10-07 16:25:50,671] WARNING [django.server:213] "GET /inventory/inventery/%3C%-%20BASE_URL%20%%3Eimage/HamburgerIcon.png HTTP/1.1" 404 5661
+[2024-10-07 16:25:50,671] WARNING [django.server:213] "GET /static/icons/logo.avif HTTP/1.1" 404 1859
+[2024-10-07 16:25:50,672] WARNING [django.server:213] "GET /inventory/inventery/%3C%-%20BASE_URL%20%%3Eimage/user.png HTTP/1.1" 404 5634
+[2024-10-07 16:25:54,319] INFO [django.server:213] "GET /inventory/login/ HTTP/1.1" 200 6291
+[2024-10-07 16:26:00,833] INFO [django.server:213] "POST /inventory/login/login-details HTTP/1.1" 200 388
+[2024-10-07 16:26:25,941] INFO [django.server:213] "GET /inventory/dashboard/ HTTP/1.1" 200 24038
+[2024-10-07 16:26:25,987] WARNING [django.request:248] Not Found: /inventory/dashboard/<%- BASE_URL %>image/notification.png
+[2024-10-07 16:26:25,992] WARNING [django.request:248] Not Found: /inventory/dashboard/<%- BASE_URL %>image/user.png
+[2024-10-07 16:26:25,998] WARNING [django.request:248] Not Found: /inventory/dashboard/<%- BASE_URL %>image/HamburgerIcon.png
+[2024-10-07 16:26:25,999] WARNING [django.server:213] "GET /inventory/dashboard/%3C%-%20BASE_URL%20%%3Eimage/user.png HTTP/1.1" 404 5634
+[2024-10-07 16:26:25,999] WARNING [django.server:213] "GET /inventory/dashboard/%3C%-%20BASE_URL%20%%3Eimage/notification.png HTTP/1.1" 404 5658
+[2024-10-07 16:26:26,001] WARNING [django.server:213] "GET /inventory/dashboard/%3C%-%20BASE_URL%20%%3Eimage/HamburgerIcon.png HTTP/1.1" 404 5661
+[2024-10-07 16:26:26,007] WARNING [django.server:213] "GET /static/icons/logo.avif HTTP/1.1" 404 1859
