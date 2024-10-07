@@ -44,4 +44,4 @@ A simple Inventory Management System built with Django to manage inventory recor
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/YourUsername/inventory-management-system.git
+   git clone https://github.com/MishraAnkit8/inventory-management-system.git
